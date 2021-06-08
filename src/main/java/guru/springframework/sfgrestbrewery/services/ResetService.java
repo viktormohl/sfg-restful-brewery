@@ -23,7 +23,7 @@ public class ResetService {
     @Scheduled(fixedRate = 15000)
     @Transactional
     public void checkBeerCount(){
-        if (beerRepository.count() > 100){
+        if (beerRepository.count().block() > 100){
             resetBeers();
         }
     }
@@ -33,8 +33,9 @@ public class ResetService {
     @Transactional
     public void resetBeers(){
         log.info("Resetting Beer Data");
-        beerRepository.deleteAllInBatch();
-        beerRepository.flush();
+        // todo migration to r2dbc
+//        beerRepository.deleteAllInBatch();
+//        beerRepository.flush();
         beerLoader.run();
     }
 
