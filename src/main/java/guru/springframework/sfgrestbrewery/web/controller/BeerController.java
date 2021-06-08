@@ -73,9 +73,7 @@ public class BeerController {
 
     @PostMapping(path = "beer")
     public ResponseEntity<Void> saveNewBeer(@RequestBody @Validated BeerDto beerDto){
-
         BeerDto savedBeer = beerService.saveNewBeer(beerDto);
-
         return ResponseEntity
                 .created(UriComponentsBuilder
                         .fromHttpUrl("http://api.springframework.guru/api/v1/beer/" + savedBeer.getId().toString())
@@ -85,20 +83,19 @@ public class BeerController {
 
     @PutMapping("beer/{beerId}")
     public ResponseEntity<BeerDto> updateBeerById(@PathVariable("beerId") UUID beerId, @RequestBody @Validated BeerDto beerDto){
-        return new ResponseEntity<>(beerService.updateBeer(beerId, beerDto), HttpStatus.NO_CONTENT);
+        BeerDto beerDto1 = beerService.updateBeer(beerId, beerDto);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("beer/{beerId}")
     public ResponseEntity<Void> deleteBeerById(@PathVariable("beerId") UUID beerId){
-
         try {
             beerService.deleteBeerById(beerId);
         } catch (EmptyResultDataAccessException emptyResultDataAccessException){
             log.debug("Beer id Not Found: {}", beerId.toString());
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return ResponseEntity.notFound().build();
         }
-
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return ResponseEntity.ok().build();
     }
 
 }
